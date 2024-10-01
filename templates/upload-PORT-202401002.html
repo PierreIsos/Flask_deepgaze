@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Télécharger une image</title>
+    <style>
+        body {
+            background-color: #01083b; /* Couleur de fond */
+            color: white; /* Couleur du texte */
+            text-align: center; /* Centre le texte */
+            margin: 0; /* Enlève les marges par défaut */
+            padding: 20px; /* Ajoute un peu de remplissage */
+            position: relative; /* Nécessaire pour positionner l'image */
+        }
+
+        img.logo {
+            position: absolute; /* Position absolue pour placer le logo */
+            top: 20px; /* Distance du haut */
+            left: 20px; /* Distance de gauche */
+            width: 200px; /* Largeur du logo */
+            height: auto; /* Hauteur auto pour maintenir le ratio */
+        }
+
+        /* Image à gauche */
+        .left-image {
+            position: absolute; /* Position absolue pour que l'image soit bien placée */
+            top: 100px; /* Commence en dessous du logo */
+            left: 0; /* Collé à gauche */
+            width: 200px; /* Largeur de l'image */
+            height: calc(100% - 100px); /* Prend toute la hauteur restante */
+            object-fit: cover; /* Remplir l'espace tout en gardant le ratio */
+        }
+
+        .button {
+            margin-top: 20px; /* Espace au-dessus des boutons */
+            padding: 10px 20px; /* Ajout de remplissage au bouton */
+            background-color: #01bab4; /* Couleur de fond du bouton */
+            color: #01083b; /* Couleur du texte du bouton */
+            border: none; /* Supprime la bordure par défaut */
+            cursor: pointer; /* Change le curseur au survol */
+            font-size: 16px; /* Taille de la police */
+            border-radius: 45px 45px 5px 45px; /* Arrondi les coins du bouton */
+            width: 200px; /* Largeur fixe pour les boutons */
+            display: block; /* Pour centrer le bouton */
+            margin-left: auto; /* Centrer horizontalement */
+            margin-right: auto; /* Centrer horizontalement */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #f0f0f0; /* Change la couleur de fond au survol */
+        }
+        
+        #progress-bar {
+            display: none; /* Masquer la barre de progression par défaut */
+            width: 100%; /* Largeur de la barre de progression */
+            margin-top: 20px; /* Espace au-dessus de la barre */
+        }
+    </style>
+</head>
+<body>
+    <img class="logo" src="https://isoskele.fr/wp-content/uploads/2023/05/MicrosoftTeams-image.png" alt="Logo">
+    <img class="left-image" src="statues_grec.png" alt="Statues Grecques"> <!-- Image à gauche -->
+    
+    <h1>Télécharger une image pour générer la carte de chaleur</h1>
+    
+    <form method="POST" enctype="multipart/form-data" id="upload-form">
+        <input type="file" name="file" accept="image/*" required onchange="uploadFile(this)" style="display: none;"> <!-- Cacher le champ de fichier -->
+        <button type="button" class="button" onclick="document.querySelector('input[type=file]').click()">Télécharger un fichier</button> <!-- Bouton pour ouvrir le sélecteur de fichiers -->
+        <progress id="progress-bar" value="0" max="100"></progress> <!-- Barre de chargement -->
+    </form>
+    
+    <button id="generate-button" class="button" onclick="generateHeatmap()" style="display:none;">Générer la carte</button> <!-- Bouton pour générer la carte -->
+    
+    <script>
+        function uploadFile(input) {
+            const progressBar = document.getElementById('progress-bar');
+            const generateButton = document.getElementById('generate-button');
+            progressBar.style.display = 'block'; // Afficher la barre de progression
+            progressBar.value = 0; // Réinitialiser la valeur de la barre
+
+            // Simuler le processus de téléchargement
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+
+            // Simuler une barre de chargement pour cet exemple
+            const interval = setInterval(() => {
+                if (progressBar.value >= 100) {
+                    clearInterval(interval);
+                    generateButton.style.display = 'block'; // Afficher le bouton de génération
+                    progressBar.style.display = 'none'; // Masquer la barre de progression après le chargement
+                } else {
+                    progressBar.value += 10; // Augmentez la valeur de la barre
+                }
+            }, 500);
+            
+            // Vous pourriez envoyer le fichier ici avec fetch ou XMLHttpRequest
+        }
+
+        function generateHeatmap() {
+            // Redirige vers la page des résultats après avoir généré la heatmap
+            document.getElementById('upload-form').submit(); // Soumettre le formulaire pour le traitement
+        }
+    </script>
+</body>
+</html>

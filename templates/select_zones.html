@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sélectionner des Zones</title>
+    <style>
+        body {
+            background-color: #01083b;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        img.logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px; /* Taille du logo */
+            height: auto;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center; /* Centrer l'image et le tableau horizontalement */
+            align-items: flex-start; /* Alignement en haut */
+            margin-top: 20px;
+            position: relative;
+        }
+        img {
+            width: 400px; /* Largeur fixe pour l'image */
+            height: auto; /* Garde le ratio d'aspect de l'image */
+            margin-right: 20px; /* Espace entre l'image et le tableau */
+        }
+        .table-container {
+            max-width: 400px; /* Largeur maximale pour le tableau */
+            margin-right: 20px; /* Espace entre le tableau et le graphique */
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%; /* Utiliser 100% pour que le tableau prenne toute la largeur de son conteneur */
+            color: white; /* Couleur du texte */
+        }
+        th, td {
+            border: 1px solid #01bab4; /* Couleur de bordure */
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #01bab4; /* Couleur d'en-tête */
+        }
+        .graph-container {
+            text-align: left; /* Alignement à gauche pour le graphique */
+            margin-top: 20px; /* Espace au-dessus du graphique */
+        }
+        .graph-container img {
+            width: 400px; /* Largeur fixe pour le graphique */
+            height: auto; /* Garde le ratio d'aspect de l'image */
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #01bab4;
+            color: #01083b;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 45px 45px 5px 45px;
+            width: 200px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #019e90;
+            color: white; /* Changez la couleur du texte lors du survol */
+        }
+        .button-container {
+            display: flex; /* Utiliser Flexbox pour le conteneur des boutons */
+            justify-content: center; /* Centrer les boutons horizontalement */
+            margin-top: 20px; /* Marge supérieure pour séparer les boutons du tableau */
+        }
+        .button-container form {
+            margin-left: 10px; /* Espace entre les formulaires de bouton */
+        }
+    </style>
+</head>
+<body>
+        <!-- Logo en haut à gauche -->
+    <img class="logo" src="https://isoskele.fr/wp-content/uploads/2023/05/MicrosoftTeams-image.png" alt="Logo">
+
+    <h1>La Probabilité de visibilité</h1>
+    <div class="container">
+        <img id="markedImage" src="{{ image_url }}" alt="Image avec zones marquées">
+        
+        <div class="table-container">
+            <!-- Formulaire pour mettre à jour les valeurs des zones -->
+            <form action="/create_graph" method="POST">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Chaleur (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for index, row in data_chaleur.iterrows() %}
+                            <tr>
+                                <td>
+                                    <input type="text" name="zone_{{ index }}" value="{{ row['Zone'] }}">
+                                </td>
+                                <td>{{ row['Chaleur'] | round(1) }} %</td>  <!-- Arrondi à une décimale -->
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button type="submit" class="button">Générer le graphique</button>
+                    {% if chart_url %}
+                        <form action="{{ url_for('download_heatmap', filename='graphique_chaleur.png') }}" method="get">
+                            <button type="submit" class="button">Télécharger le graphique</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Div pour afficher le graphique généré -->
+            {% if chart_url %}
+                <div class="graph-container">
+                    <img src="{{ chart_url }}" alt="Probabilité d'être vue par zone">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

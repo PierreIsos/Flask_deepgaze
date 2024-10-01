@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Télécharger une image</title>
+    <style>
+        body {
+            background-color: #01083b; /* Couleur de fond */
+            color: white; /* Couleur du texte */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh; /* Prendre toute la hauteur de la fenêtre */
+            overflow: hidden; /* Désactiver le scroll */
+        }
+
+        /* Positionner le logo en haut à gauche */
+        img.logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px; /* Taille du logo */
+            height: auto;
+        }
+
+        /* Conteneur pour l'image en dessous du logo */
+        .image-container {
+            width: 30%; /* Prendre 40% de la largeur de la page */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 150px; /* Placer sous le logo */
+        }
+
+        /* Taille de l'image */
+        .image-container img {
+            width: 100%; /* Prendre toute la largeur du conteneur */
+            height: auto;
+            display: block;
+        }
+
+        /* Contenu à droite */
+        .content {
+            width: 70%; /* Prendre le reste de la largeur */
+            display: flex;
+            flex-direction: column; /* Placer le texte et le bouton en colonne */
+            justify-content: center; /* Centrer verticalement */
+            align-items: center; /* Centrer horizontalement */
+            padding: 20px;
+        }
+
+        /* Centrer le texte et le bouton */
+        h1 {
+            margin-bottom: 20px;
+            text-align: center; /* Centrer le texte */
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #01bab4;
+            color: #01083b;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 45px 45px 5px 45px;
+            width: 200px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #f0f0f0;
+        }
+
+        #progress-bar {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo en haut à gauche -->
+    <img class="logo" src="https://isoskele.fr/wp-content/uploads/2023/05/MicrosoftTeams-image.png" alt="Logo">
+
+    <!-- Conteneur pour l'image sous le logo -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='statues_grec.png') }}" alt="Grande image">
+    </div>
+
+    <!-- Contenu principal à droite -->
+    <div class="content">
+        <h1>Télécharger une image pour générer la carte de chaleur</h1>
+        
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+            <input type="file" name="file" accept="image/*" required onchange="uploadFile(this)" style="display: none;">
+            <button type="button" class="button" id="upload-btn" onclick="resetAndSelectFile()">Télécharger un fichier</button>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </form>
+
+        <button id="generate-button" class="button" onclick="generateHeatmap()" style="display:none;">Générer la carte</button>
+    </div>
+
+    <!-- Lecteur audio caché pour la musique d'attente -->
+    <audio id="waiting-music" loop style="display: none;">
+        <source src="{{ url_for('static', filename='music/waiting_music.mp3') }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        function resetAndSelectFile() {
+            const input = document.querySelector('input[type=file]');
+            // Réinitialiser le champ de fichier pour permettre de resélectionner le même fichier
+            input.value = null;
+            // Ouvrir à nouveau le sélecteur de fichier
+            input.click();
+        }
+
+        function uploadFile(input) {
+            const progressBar = document.getElementById('progress-bar');
+            const generateButton = document.getElementById('generate-button');
+
+            // Réinitialiser la barre de progression à chaque fois
+            progressBar.style.display = 'block';
+            progressBar.value = 0;
+
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+
+            // Simuler la progression du chargement pour cet exemple
+            const interval = setInterval(() => {
+                if (progressBar.value >= 100) {
+                    clearInterval(interval);
+                    generateButton.style.display = 'block'; // Afficher le bouton de génération
+                    progressBar.style.display = 'none'; // Masquer la barre de progression après le chargement
+                } else {
+                    progressBar.value += 10; // Augmentez la valeur de la barre de 10% toutes les 500 ms
+                }
+            }, 500);
+        }
+
+        function generateHeatmap() {
+            // Démarrer la musique d'attente
+            playWaitingMusic();
+            // Soumettre le formulaire pour le traitement
+            document.getElementById('upload-form').submit();
+        }
+
+        function playWaitingMusic() {
+            // Sélectionner l'élément audio et démarrer la musique
+            const music = document.getElementById("waiting-music");
+            music.play();
+        }
+    </script>
+</body>
+</html>

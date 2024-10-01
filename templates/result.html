@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Résultats</title>
+    <style>
+        body {
+            background-color: #01083b;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        img.logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        img {
+            width: 400px;
+            height: 400px;
+            object-fit: contain;
+            margin: 0 10px;
+        }
+
+        h2 {
+            margin-top: 10px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #01bab4;
+            color: #01083b;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 45px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Nouveau style pour l'input nombre de zones */
+        .zones-input {
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <img class="logo" src="https://isoskele.fr/wp-content/uploads/2023/05/MicrosoftTeams-image.png" alt="Logo">
+    <h1>Résultats</h1>
+    
+    <div class="image-container">
+        <div>
+            <h2>Création Uploadée</h2>
+            <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image">
+            
+            <!-- Formulaire pour choisir une autre image -->
+            <form action="/" method="get" style="margin-top: 20px;">
+                <button type="submit" class="button">Choisir une autre image</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>Carte de Chaleur</h2>
+            <img src="{{ url_for('static', filename='heatmaps/' + heatmap_image) }}" alt="Heatmap">
+            
+            <div class="button-container">
+                <!-- Bouton pour télécharger la carte de chaleur -->
+                <form action="{{ url_for('download_heatmap', filename=heatmap_image) }}" method="get">
+                    <button type="submit" class="button">Télécharger la carte de chaleur</button>
+                </form>
+
+                <!-- Formulaire pour sélectionner le nombre de zones et ouvrir la fenêtre OpenCV -->
+                <form action="/set-zones" method="post" style="margin-top: 20px;">
+                    <label for="nombre_de_zones">Nombre de zones souhaitées :</label>
+                    <input type="number" id="nombre_de_zones" name="nombre_de_zones" min="1" max="20" class="zones-input" required>
+                    
+                    <!-- Champ caché pour transmettre le nom de l'image uploadée -->
+                    <input type="hidden" name="image_filename" value="{{ uploaded_image }}">
+                    
+                    <button type="submit" class="button">Ouvrir la fenêtre de sélection</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
